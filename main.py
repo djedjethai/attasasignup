@@ -1,4 +1,5 @@
 import os
+import platform
 import pandas as pd
 from docx import Document
 from docx.shared import Inches
@@ -6,7 +7,8 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt
 
 # from docx.oxml.ns import nsdecls
-# from docx.oxml import OxmlElement
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 
 from utility import replace_title, may_empty
 
@@ -19,7 +21,6 @@ template_file = "./forms/formTest.docx"
 
 placeholder = ''
 
-
 # Process each row and generate a form
 for index, row in responses.iterrows():
     # Load the template
@@ -27,7 +28,10 @@ for index, row in responses.iterrows():
     
     # Replace placeholders with actual data
     for paragraph in doc.paragraphs:
-
+        paragraph.style.font.name = 'TH Sarabun New'
+        paragraph.style.font.size = Pt(12)
+     
+        
         print('the paragraph is: ', paragraph.text)
         for col_index, (key, value) in enumerate(row.items()):  # Use enumerate
             print(f"Processing column {col_index}: key = {key}, value = {value}")
@@ -100,17 +104,13 @@ for index, row in responses.iterrows():
             else:
                 print(f"In else {col_index}: key = {key}, value = {value}")
 
-            # NOTE 1 ok
-            # for run in paragraph.runs:
-            #     run.font.size = Pt(10)
-        
-        # NOTE ok mais comme note 1 
-        # paragraph.style.font.size = Pt(10)
-    # Adjust font size for all paragraphs and runs in the document (including template)
-    # for para in doc.paragraphs:
-    #     para.style.font.size = Pt(12)
-    #     # for run in para.runs:
-            
+        # # NOTE 1 ok
+        # for run in paragraph.runs:
+        #     # run.font.name = 'Liberation Sans'
+        #     run.font.name = 'TH Sarabun New'
+        #     run.font.size = Pt(17)
+       
+           
     # Save the filled form
     output_directory = "./results/"
     output_file = f"{output_directory}form_{index + 1}.docx"
