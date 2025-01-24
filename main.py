@@ -1,122 +1,164 @@
-import os
-import platform
 import pandas as pd
-from docx import Document
-from docx.shared import Inches
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt
-
-# from docx.oxml.ns import nsdecls
-from docx.oxml import OxmlElement
-from docx.oxml.ns import qn
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase.ttfonts import TTFont
+import os
+from reportlab.pdfbase import pdfmetrics
 
 from utility import replace_title, may_empty
 
-# Load the responses from the Excel file
-input_file = "./data/responses.xlsx"
-responses = pd.read_excel(input_file)
+image_path = './data/picture.png'
 
-# Define the template file (can be an empty form with placeholders)
-template_file = "./forms/formTest.docx"
+# Load the Excel file
+excel_file = "./data/responses.xlsx"  # Replace with your file name
+data = pd.read_excel(excel_file)
+
+# Register the Thai font if needed
+pdfmetrics.registerFont(TTFont('THSarabun', './fonts/THSarabun-New-Regular.ttf'))
+pdfmetrics.registerFont(TTFont('DejaVuSans', './fonts/DejaVuSans.ttf'))
+
+# Function to read template from a file
+def load_template(template_file):
+    with open(template_file, "r", encoding="utf-8") as file:
+        return file.read()
+
+# Load the template
+template_file = "./forms/formTxt.txt"  # Replace with the path to your template file
+template = load_template(template_file)
 
 placeholder = ''
 
-# Process each row and generate a form
-for index, row in responses.iterrows():
-    # Load the template
-    doc = Document(template_file)
-    
-    # Replace placeholders with actual data
-    for paragraph in doc.paragraphs:
-        paragraph.style.font.name = 'TH Sarabun New'
-        paragraph.style.font.size = Pt(12)
-     
-        
-        print('the paragraph is: ', paragraph.text)
-        for col_index, (key, value) in enumerate(row.items()):  # Use enumerate
-            print(f"Processing column {col_index}: key = {key}, value = {value}")
-
-            if key == 'เพศ':    
-                paragraph = replace_title(paragraph, str(value)) 
-                
-            elif key == 'ชื่อ':  # Correct syntax for equality check
+# Function to replace placeholders
+def generate_form(row, template):
+    form = template
+    for col in row.index:
+        print(col)
+        if col.strip() == 'เพศ':
+            form = replace_title(form, row[col])
+        elif col.strip() == 'ชื่อ':
                 placeholder = '$2'
-                paragraph.text = paragraph.text.replace(placeholder, str(value))
-
-            elif key == 'นามสกุล':  # Correct syntax for equality check
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'นามสกุล':
                 placeholder = '$3'
-                paragraph.text = paragraph.text.replace(placeholder, str(value))
-
-            elif key == 'วัน/เดือน/ปี (พ.ศ.) เกิด':  # Correct syntax for equality check
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'วัน/เดือน/ปี (พ.ศ.) เกิด':
                 placeholder = '$4'
-                paragraph.text = paragraph.text.replace(placeholder, str(value))
-            
-            elif key == 'ที่อยู่ปัจจุบัน เลขที่':  # Correct syntax for equality check
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'ที่อยู่ปัจจุบัน เลขที่':
                 placeholder = '$5'
-                paragraph.text = paragraph.text.replace(placeholder, str(value))
-
-            elif key == 'หมู่ที่':  # Correct syntax for equality check
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'หมู่ที่':
                 placeholder = '$6'
-                paragraph = may_empty(paragraph, value, placeholder)
-
-            elif key == 'หมู่บ้าน':  # Correct syntax for equality check
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'หมู่บ้าน':
                 placeholder = '$7'
-                paragraph = may_empty(paragraph, value, placeholder)
-
-            elif key == 'ซอย':  # Correct syntax for equality check
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'ซอย':
                 placeholder = '$8'
-                paragraph = may_empty(paragraph, value, placeholder)
-
-            elif key == 'ถนน':  # Correct syntax for equality check
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'ถนน':
                 placeholder = '$9'
-                paragraph = may_empty(paragraph, value, placeholder)
-
-            elif key == 'แขวง':  # Correct syntax for equality check
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'แขวง':
                 placeholder = '$10'
-                paragraph.text = paragraph.text.replace(placeholder, str(value))
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'เขต':
+                placeholder = '$11'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'จังหวัด':
+                placeholder = '$12'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'รหัสไปรษณีย์':
+                placeholder = '$13'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'รุ่นที่': # krou samathi
+                placeholder = '$19'
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'เลขสาขา':
+                placeholder = '$-2'
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'เบอร์โทรศัพท์ (รูปแบบ xxx-xxx-xxxx)':
+                placeholder = '$14'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'กรณีฉุกเฉินติดต่อ':
+                placeholder = '$17'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'เบอร์โทรศัพท์ผู้ติดต่อฉุกเฉิน (รูปแบบ xxx-xxx-xxxx)':
+                placeholder = '$18'
+                form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'กรุณาตรวจสอบคำตอบของคุณก่อนที่จะส่ง':
+            print('.............')
+            # add a pic
 
-            elif key == '  กรุณาตรวจสอบคำตอบของคุณก่อนที่จะส่ง  ':  # Correct syntax for equality check
-                img_path = './data/images.png'
-                place = 'picture'
+    # print("Generated form:", form)
+    return form
 
-                # Split the paragraph into runs and look for the placeholder
-                for run in paragraph.runs:
-                    print('Found placeholder run.text is :', run.text)
-                    run.text = run.text.strip()
-                    if place in run.text:  # Find the run containing the placeholder
-                        # Split the text at the placeholder
-                        text_before = run.text.split(place)[0]
-                        text_after = run.text.split(place)[1]
-                        
-                        # Clear the existing run text and add new text before and after the placeholder
-                        run.text = text_before
-                        new_run = paragraph.add_run()  # Add a new run for the image
-                        new_run.add_picture(img_path, width=Inches(1), height=Inches(1))
-                        paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-                        # Add the remaining text after the placeholder
-                        run = paragraph.add_run()
-                        run.text = text_after
-                        
-                        # picture_added = True  # Mark the picture as added
-                        break  # Exit the loop after adding the picture
+def create_pdf(content, output_path, image_path=None):
+    line_spacing = 2
+
+    c = canvas.Canvas(output_path, pagesize=letter)
+    width, height = letter
+    c.setFont("THSarabun", 18)  # Use the Thai font here
+    # c.setFont("DejaVuSans", 18) 
+    lines = content.split("\n")
+
+    y_position = height - 40  # Starting position from the top
+    
+    for line in lines:
+        y_position -= line_spacing
+
+        if 'X' in line:
+            parts = line.split('X')
+            x_position = 40
+            for part in parts[:-1]:
+                c.drawString(x_position, y_position, part)
+                x_position += c.stringWidth(part, "THSarabun", 18)
+                c.setFont("DejaVuSans", 18)
+                c.drawString(x_position, y_position, '☒')
+                x_position += c.stringWidth('☒', "DejaVuSans", 18)
+                c.setFont("THSarabun", 18)
+            c.drawString(x_position, y_position, parts[-1])
+        else:
+            c.drawString(40, y_position, line)
+        
                 
-            else:
-                print(f"In else {col_index}: key = {key}, value = {value}")
+        if 'ธรรมศึกษาชั้นตรี' in line:
+            picture_x = 480  # X position of image (adjust as needed)
+            picture_y = y_position - 75  # Y position (adjust as needed)
+            c.drawImage(image_path, picture_x, picture_y, width=100, height=100)  # Adjust size and position
+            # y_position -= 120  # Adjust space for the image
+            y_position = picture_y + 75  # Adjust y_position to account for the height of the image
 
-        # # NOTE 1 ok
-        # for run in paragraph.runs:
-        #     # run.font.name = 'Liberation Sans'
-        #     run.font.name = 'TH Sarabun New'
-        #     run.font.size = Pt(17)
-       
-           
-    # Save the filled form
-    output_directory = "./results/"
-    output_file = f"{output_directory}form_{index + 1}.docx"
-    # output_file = f"form_{index + 1}.docx"  # Name the file based on the row index
-    doc.save(output_file)
+        if 'ธรรมศึกษาชั้นเอก' in line:
+            picture_x = 480  # X position of image (adjust as needed)
+            picture_y = y_position - 75  # Y position (adjust as needed)
+            c.drawImage(image_path, picture_x, picture_y, width=100, height=100)  # Adjust size and position
+            # y_position -= 120  # Adjust space for the image
+            y_position = picture_y + 75  # Adjust y_position to account for the height of the image
 
-print("Forms generated successfully!")
+        y_position -= 14
+        
+        if y_position < 40:  # Check if we're at the bottom of the page
+            c.showPage()
+            c.setFont("THSarabun", 10)
+            y_position = height - 40
 
+    c.save()
+
+# Generate PDFs for each row
+output_folder = "output_pdfs"  # Folder to save the PDFs
+os.makedirs(output_folder, exist_ok=True)
+
+# Assuming there's a column in the Excel file with image paths
+for index, row in data.iterrows():
+    filled_form = generate_form(row, template)
+
+    # Assuming the column for image paths is 'image_path' in the Excel file
+    # image_path = row.get('./data/images.png', None)  # Modify this based on your Excel column name
+    
+    output_path = os.path.join(output_folder, f"form_{index + 1}.pdf")
+    create_pdf(filled_form, output_path, image_path)
+
+print(f"PDFs have been generated in the folder: {output_folder}")
 
