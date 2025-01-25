@@ -9,6 +9,10 @@ from utility import replace_title, may_empty
 
 image_path = './data/picture.png'
 
+tri = False
+to = True
+eg = False
+
 # Load the Excel file
 excel_file = "./data/responses.xlsx"  # Replace with your file name
 data = pd.read_excel(excel_file)
@@ -95,6 +99,10 @@ def generate_form(row, template):
 
 
 def create_pdf(content, output_path, image_path=None):
+    content = content.replace('$ti', 'X' if tri else '□')
+    content = content.replace('$to', 'X' if to else '□')
+    content = content.replace('$eg', 'X' if eg else '□')
+
     line_spacing = 2
 
     c = canvas.Canvas(output_path, pagesize=letter)
@@ -107,7 +115,7 @@ def create_pdf(content, output_path, image_path=None):
     
     for line in lines:
         y_position -= line_spacing
-
+        
         if 'X' in line:
             parts = line.split('X')
             x_position = 40
