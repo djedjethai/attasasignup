@@ -137,6 +137,12 @@ def fil_form_to_eg(row, form):
         elif col.strip() == 'เลขสาขา':
                 placeholder = '$-2'
                 form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'ชื่อสาขา':
+                placeholder = '$-3'
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'การศึกษา':
+                placeholder = '$-4'
+                form = may_empty(form, row[col], placeholder)
         elif col.strip() == 'เบอร์โทรศัพท์ (รูปแบบ xxx-xxx-xxxx)':
                 placeholder = '$14'
                 form = form.replace(placeholder, str(row[col]))
@@ -200,6 +206,12 @@ def fil_form_tri(row, form):
                 form = may_empty(form, row[col], placeholder)
         elif col.strip() == 'เลขสาขา':
                 placeholder = '$-2'
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'ชื่อสาขา':
+                placeholder = '$-3'
+                form = may_empty(form, row[col], placeholder)
+        elif col.strip() == 'การศึกษา':
+                placeholder = '$-4'
                 form = may_empty(form, row[col], placeholder)
         elif col.strip() == 'เบอร์โทรศัพท์ (รูปแบบ xxx-xxx-xxxx)':
                 placeholder = '$14'

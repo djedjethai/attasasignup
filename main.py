@@ -32,8 +32,17 @@ if cli_args.args[0] == 'eg':
 # Debug: Print received arguments
 print(f"Students level: {cli_args.args[0]}")
 
-# Load the Excel file
-data = pd.read_excel(config.EXCEL_FILE)
+# Get the list of files in the data folder
+files_in_data_folder = [f for f in os.listdir(config.DATA_FOLDER) if os.path.isfile(os.path.join(config.DATA_FOLDER, f))]
+
+# Check if there is more than one file in the 'data' folder
+if len(files_in_data_folder) != 1:
+    print(f"Error: More than one or no file found in the '{config.DATA_FOLDER}' folder")
+    sys.exit(1)
+
+excel_file = os.path.join(config.DATA_FOLDER, files_in_data_folder[0])
+data = pd.read_excel(excel_file)
+print(f"Loaded file: {excel_file}")
 
 # Register the Thai font if needed
 pdfmetrics.registerFont(TTFont('THSarabun', config.TH_SARABUN))

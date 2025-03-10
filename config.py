@@ -1,6 +1,6 @@
 import os
 
-EXCEL_FILE = os.path.join("data", "data.xlsx")
+DATA_FOLDER = "data"
 TEMPLATE_FILE = os.path.join("forms", "formTxt.txt")
 IMAGE_PATH = os.path.join("pictures", "picture.png")
 TH_SARABUN = os.path.join("fonts", "THSarabun-New-Regular.ttf")
