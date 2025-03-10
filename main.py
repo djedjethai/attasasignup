@@ -1,3 +1,5 @@
+import sys
+import argparse
 import pandas as pd
 import os
 import config
@@ -6,6 +8,29 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 
 from utility import replace_title, may_empty, fil_form_tri, fil_form_to_eg, create_pdf
+
+# Set up argument parsing
+parser = argparse.ArgumentParser(description="Process an Excel file and generate a PDF report.")
+parser.add_argument("args", nargs="*", help="Optional arguments for processing")
+
+cli_args = parser.parse_args()
+
+# Allowed first arguments
+valid_options = {"tri", "to", "eg"}
+
+if not cli_args.args or cli_args.args[0] not in valid_options:
+    print("Error: First argument must be one of 'tri', 'to', or 'eg'.")
+    sys.exit(1)  # Exit the program with an error code
+
+if cli_args.args[0] == 'tri':
+    config.TRI = True
+if cli_args.args[0] == 'to':
+    config.TO = True
+if cli_args.args[0] == 'eg':
+    config.EG = True
+
+# Debug: Print received arguments
+print(f"Students level: {cli_args.args[0]}")
 
 # Load the Excel file
 data = pd.read_excel(config.EXCEL_FILE)

@@ -8,7 +8,7 @@ DEJAVU_SANS = os.path.join("fonts", "DejaVuSans.ttf")
 OUTPUT_FOLDER = "output_pdfs"
 
 TRI = False
-TO = True
+TO = False
 EG = False
 
 FILENAME = "default_form"

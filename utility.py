@@ -231,15 +231,19 @@ def replace_title(form, gender_value):
     if gender_value == 'นาย':
         form = form.replace('$00', '$X' if pd.notna(gender_value) else "")
         placeholders.remove('$00')
+        form = form.replace('$04', "")
     elif gender_value == 'นาง':
         form = form.replace('$01', '$X' if pd.notna(gender_value) else "")
         placeholders.remove('$01')
+        form = form.replace('$04', "")
     elif gender_value == 'นางสาว':
         form = form.replace('$02', '$X' if pd.notna(gender_value) else "")
         placeholders.remove('$02')
+        form = form.replace('$04', "")
     else:
-        form = form.replace('$03', f"{gender_value}" if pd.notna(gender_value) else "")
+        form = form.replace('$03', '$X' if pd.notna(gender_value) else "")
         placeholders.remove('$03')
+        form = form.replace('$04', f"{gender_value}" if pd.notna(gender_value) else "")
 
     return clear_placeholders(form, placeholders)
 
