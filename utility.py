@@ -153,6 +153,9 @@ def fil_form_to_eg(row, form):
         elif col.strip() == 'เบอร์โทรศัพท์ผู้ติดต่อฉุกเฉิน (รูปแบบ xxx-xxx-xxxx)':
                 placeholder = '$18'
                 form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'Timestamp':
+                placeholder = '$-5'
+                form = form.replace(placeholder, str(row[col].date()))
         
     return form
 
@@ -223,7 +226,9 @@ def fil_form_tri(row, form):
         elif col.strip() == 'เบอร์โทรศัพท์ผู้ติดต่อฉุกเฉิน (รูปแบบ xxx-xxx-xxxx)':
                 placeholder = '$18'
                 form = form.replace(placeholder, str(row[col]))
-        
+        elif col.strip() == 'Timestamp':
+                placeholder = '$-5'
+                form = form.replace(placeholder, str(row[col].date()))
     return form
 
 def may_empty(form, value, placeholder):
