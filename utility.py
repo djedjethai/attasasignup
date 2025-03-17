@@ -88,6 +88,7 @@ def create_pdf(content, output_path, image_path=None):
 
 def fil_form_to_eg(row, form):
     placeholder = ''
+    isKrou = True
     for col in row.index:
         # if col.strip() == 'เพศ':
         if col.strip() == 'คำนำหน้าฃื่อ':
@@ -130,14 +131,20 @@ def fil_form_to_eg(row, form):
         elif col.strip() == 'รหัสไปรษณีย์':
                 placeholder = '$13'
                 form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'ครูสมาธิ':
+                if str(row[col]) == 'ไม่ใช่':
+                    form = form.replace('จบหลักสูตรนักศึกษาครูสมาธิรุ่นที่: $19   เลขที่สาขา: $-2   ชื่อสาขา: $-3', '$X')
+                    isKrou = False
+                else:
+                    form = form.replace('ไม่ได้เรียนครูสมาธิ', '')
         # elif col.strip() == 'รุ่นที่': # krou samathi
-        elif col.strip() == 'รุ่น': # krou samathi
+        elif isKrou and col.strip() == 'รุ่น': # krou samathi
                 placeholder = '$19'
                 form = may_empty(form, row[col], placeholder)
-        elif col.strip() == 'เลขสาขา':
+        elif isKrou and col.strip() == 'เลขสาขา':
                 placeholder = '$-2'
                 form = may_empty(form, row[col], placeholder)
-        elif col.strip() == 'ชื่อสาขา':
+        elif isKrou and col.strip() == 'ชื่อสาขา':
                 placeholder = '$-3'
                 form = may_empty(form, row[col], placeholder)
         elif col.strip() == 'การศึกษา':
@@ -161,6 +168,7 @@ def fil_form_to_eg(row, form):
 
 def fil_form_tri(row, form):
     placeholder = ''
+    isKrou = True
     for col in row.index:
         # if col.strip() == 'เพศ':
         if col.strip() == 'คำนำหน้าฃื่อ':
@@ -203,14 +211,20 @@ def fil_form_tri(row, form):
         elif col.strip() == 'รหัสไปรษณีย์':
                 placeholder = '$13'
                 form = form.replace(placeholder, str(row[col]))
+        elif col.strip() == 'ครูสมาธิ':
+                if str(row[col]) == 'ไม่ใช่':
+                    form = form.replace('จบหลักสูตรนักศึกษาครูสมาธิรุ่นที่: $19   เลขที่สาขา: $-2   ชื่อสาขา: $-3', '$X')
+                    isKrou = False
+                else:
+                    form = form.replace('ไม่ได้เรียนครูสมาธิ', '')
         # TODO to change next round, to align with to and eg
-        elif col.strip() == 'รุ่นที่': # krou samathi
+        elif isKrou and col.strip() == 'รุ่นที่': # krou samathi
                 placeholder = '$19'
                 form = may_empty(form, row[col], placeholder)
-        elif col.strip() == 'เลขสาขา':
+        elif isKrou and col.strip() == 'เลขสาขา':
                 placeholder = '$-2'
                 form = may_empty(form, row[col], placeholder)
-        elif col.strip() == 'ชื่อสาขา':
+        elif isKrou and col.strip() == 'ชื่อสาขา':
                 placeholder = '$-3'
                 form = may_empty(form, row[col], placeholder)
         elif col.strip() == 'การศึกษา':
@@ -229,6 +243,7 @@ def fil_form_tri(row, form):
         elif col.strip() == 'Timestamp':
                 placeholder = '$-5'
                 form = form.replace(placeholder, str(row[col].date()))
+    
     return form
 
 def may_empty(form, value, placeholder):
