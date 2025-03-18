@@ -2,6 +2,7 @@ import pandas as pd
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import config
+import datetime
 
 def create_pdf(content, output_path, image_path=None):
     content = content.replace('$ti', '$X' if config.TRI else '$Y')
@@ -162,8 +163,10 @@ def fil_form_to_eg(row, form):
                 form = form.replace(placeholder, str(row[col]))
         elif col.strip() == 'Timestamp':
                 placeholder = '$-5'
-                form = form.replace(placeholder, str(row[col].date()))
-        
+                # form = form.replace(placeholder, str(row[col].date()))
+                original_date = row[col].date()  # Convert Pandas Timestamp to Python date
+                new_date = datetime.date(original_date.year + 543, original_date.month, original_date.day)  # Add 543 years
+                form = form.replace(placeholder, str(new_date))
     return form
 
 def fil_form_tri(row, form):
@@ -242,8 +245,10 @@ def fil_form_tri(row, form):
                 form = form.replace(placeholder, str(row[col]))
         elif col.strip() == 'Timestamp':
                 placeholder = '$-5'
-                form = form.replace(placeholder, str(row[col].date()))
-    
+                # form = form.replace(placeholder, str(row[col].date()))
+                original_date = row[col].date()  # Convert Pandas Timestamp to Python date
+                new_date = datetime.date(original_date.year + 543, original_date.month, original_date.day)  # Add 543 years
+                form = form.replace(placeholder, str(new_date))
     return form
 
 def may_empty(form, value, placeholder):
