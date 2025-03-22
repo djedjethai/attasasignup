@@ -96,11 +96,13 @@ def fil_form_to_eg(row, form):
                 form = replace_title(form, row[col])
         elif col.strip() == 'ชื่อ':
                 placeholder = '$2'
-                form = form.replace(placeholder, str(row[col]))
+                strVal = str(row[col])
+                config.FIRSTNAME = strVal
+                form = form.replace(placeholder, strVal)
         elif col.strip() == 'นามสกุล':
                 placeholder = '$3'
                 strVal = str(row[col])
-                config.FILENAME = strVal
+                config.FAMILYNAME = strVal
                 form = form.replace(placeholder, strVal)
         elif col.strip() == 'วัน/เดือน/ปี (พ.ศ.) เกิด':
                 placeholder = '$4'
@@ -178,11 +180,14 @@ def fil_form_tri(row, form):
                 form = replace_title(form, row[col])
         elif col.strip() == 'ชื่อ':
                 placeholder = '$2'
-                form = form.replace(placeholder, str(row[col]))
+                strVal = str(row[col])
+                config.FIRSTNAME = strVal
+                form = form.replace(placeholder, strVal)
+                # form = form.replace(placeholder, str(row[col]))
         elif col.strip() == 'นามสกุล':
                 placeholder = '$3'
                 strVal = str(row[col])
-                config.FILENAME = strVal
+                config.FAMILYNAME = strVal
                 form = form.replace(placeholder, strVal)
         elif col.strip() == 'วัน/เดือน/ปี (พ.ศ.) เกิด':
                 placeholder = '$4'

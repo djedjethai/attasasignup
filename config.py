@@ -11,6 +11,7 @@ TRI = False
 TO = False
 EG = False
 
-FILENAME = "default_form"
-
+# FILENAME = "default_form"
+FIRSTNAME = "default_firstname"
+FAMILYNAME = "default_familyname"
 

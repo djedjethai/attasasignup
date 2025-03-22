@@ -71,9 +71,9 @@ def generate_form(row, template):
 for index, row in data.iterrows():
     # filled_form = fil_form(row, template)
     filled_form = generate_form(row, template)
-    formatted_index = str(index + 2).zfill(3)
+    formatted_index = str(index + 1).zfill(3)
 
-    output_path = os.path.join(config.OUTPUT_FOLDER, f"{formatted_index}_{config.FILENAME}.pdf")
+    output_path = os.path.join(config.OUTPUT_FOLDER, f"{formatted_index}-{config.FIRSTNAME}_{config.FAMILYNAME}.pdf")
     create_pdf(filled_form, output_path, config.IMAGE_PATH)
 
 print(f"PDFs have been generated in the folder: {config.OUTPUT_FOLDER}")
